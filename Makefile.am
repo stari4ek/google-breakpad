@@ -320,6 +320,12 @@ bin_PROGRAMS += \
 endif
 endif LINUX_HOST
 
+if APPLE_HOST
+if !DISABLE_TOOLS
+bin_PROGRAMS += \
+	src/tools/linux/dump_syms/dump_syms
+endif
+endif APPLE_HOST
 
 ## Tests
 if !DISABLE_PROCESSOR
@@ -510,27 +516,6 @@ src_tools_linux_core2md_core2md_SOURCES = \
 src_tools_linux_core2md_core2md_LDADD = \
 	src/client/linux/libbreakpad_client.a
 
-src_tools_linux_dump_syms_dump_syms_SOURCES = \
-	src/common/dwarf_cfi_to_module.cc \
-	src/common/dwarf_cu_to_module.cc \
-	src/common/dwarf_line_to_module.cc \
-	src/common/language.cc \
-	src/common/module.cc \
-	src/common/stabs_reader.cc \
-	src/common/stabs_to_module.cc \
-	src/common/dwarf/bytereader.cc \
-	src/common/dwarf/dwarf2diehandler.cc \
-	src/common/dwarf/dwarf2reader.cc \
-	src/common/linux/crc32.cc \
-	src/common/linux/dump_symbols.cc \
-	src/common/linux/elf_symbols_to_module.cc \
-	src/common/linux/elfutils.cc \
-	src/common/linux/file_id.cc \
-	src/common/linux/linux_libc_support.cc \
-	src/common/linux/memory_mapped_file.cc \
-	src/common/linux/safe_readlink.cc \
-	src/tools/linux/dump_syms/dump_syms.cc
-
 src_tools_linux_md2core_minidump_2_core_SOURCES = \
 	src/common/linux/memory_mapped_file.cc \
 	src/tools/linux/md2core/minidump-2-core.cc
@@ -617,6 +602,35 @@ src_tools_linux_md2core_minidump_2_core_unittest_LDADD = \
 	$(PTHREAD_CFLAGS) $(PTHREAD_LIBS)
 
 endif LINUX_HOST
+
+if !DISABLE_TOOLS
+src_tools_linux_dump_syms_dump_syms_SOURCES = \
+	src/common/dwarf_cfi_to_module.cc \
+	src/common/dwarf_cu_to_module.cc \
+	src/common/dwarf_line_to_module.cc \
+	src/common/language.cc \
+	src/common/module.cc \
+	src/common/stabs_reader.cc \
+	src/common/stabs_to_module.cc \
+	src/common/dwarf/bytereader.cc \
+	src/common/dwarf/dwarf2diehandler.cc \
+	src/common/dwarf/dwarf2reader.cc \
+	src/common/linux/crc32.cc \
+	src/common/linux/dump_symbols.cc \
+	src/common/linux/elf_symbols_to_module.cc \
+	src/common/linux/elfutils.cc \
+	src/common/linux/file_id.cc \
+	src/common/linux/linux_libc_support.cc \
+	src/common/linux/memory_mapped_file.cc \
+	src/common/linux/safe_readlink.cc \
+	src/tools/linux/dump_syms/dump_syms.cc
+if APPLE_HOST
+src_tools_linux_dump_syms_dump_syms_SOURCES += \
+	src/common/memrchr.cc
+src_tools_linux_dump_syms_dump_syms_CPPFLAGS = \
+	-I$(top_srcdir)/src/third_party/linux/include
+endif
+endif !DISABLE_TOOLS
 
 if !DISABLE_PROCESSOR
 src_processor_address_map_unittest_SOURCES = \
@@ -1288,6 +1302,8 @@ EXTRA_DIST = \
 	src/common/mac/string_utilities.h \
 	src/common/md5.cc \
 	src/common/md5.h \
+	src/common/memrchr.cc \
+	src/common/memrchr.h \
 	src/common/scoped_ptr.h \
 	src/common/solaris/dump_symbols.cc \
 	src/common/solaris/dump_symbols.h \
